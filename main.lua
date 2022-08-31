@@ -26,6 +26,7 @@ function love.load()
     anim8 = require 'libraries/anim8/anim8'
     sti = require 'libraries/Simple-Tiled-Implementation/sti'
     cameraFile = require 'libraries/hump/camera'
+    suit = require 'libraries/suit-master'
  
 
     -- Creates a camera object 
@@ -100,6 +101,14 @@ function love.load()
     dangerZone = world:newRectangleCollider(-500, love.graphics.getHeight() + 20, 5000, 50, {collision_class = 'Danger'})
     dangerZone:setType('static')
 
+    
+
+
+    -- GameState and Menu variables
+    gameState = false
+    escMenu = false
+    
+
     platforms = {}
 
     -- Flag global variable positions
@@ -130,38 +139,52 @@ end
 
 -- Updates via the fps
 function love.update(dt)
-    -- Updates the physics world
-    world:update(dt)
-    -- Updates the map
-    gameMap:update(dt)
-    playerUpdate(dt)
-    updateEnemies(dt)
+    if gameState then
+        -- Updates the physics world
+        world:update(dt)
+        -- Updates the map
+        gameMap:update(dt)
+        playerUpdate(dt)
+        updateEnemies(dt)
 
-    -- Makes the camera look at a specific point, in our game the player and the middle of the screen
-    local px = player:getPosition()
-    cam:lookAt(px, love.graphics.getHeight() / 2)
+        -- Makes the camera look at a specific point, in our game the player and the middle of the screen
+        local px = player:getPosition()
+        cam:lookAt(px, love.graphics.getHeight() / 2)
 
-    -- Querys for flag
-    levelLoader()
+        -- Querys for flag
+        levelLoader()
+    
+    elseif not gameState then
+        local bsx = 400
+        local bsy = 100
+        if suit.Button("Start", {font = gameFont}, love.graphics.getWidth() / 2 - (bsx / 2), love.graphics.getHeight() / 2 - bsy / 2, bsx, bsy).hit then
+            gameState = true
+        end
+    end
     
 end
 
 -- Draws objects to window
 function love.draw()
-    love.graphics.draw(sprites.background, 0, 0)
-    love.graphics.setFont(gameFont)
-    love.graphics.printf("Level is: " .. saveData.currentLevel, 0, 20, love.graphics.getWidth(), "center")
- 
-    -- Draws everything to the screen in reference to the cameras viewpoint that is within its indentation
-    cam:attach()
-        -- Draws the map
-        gameMap:drawLayer(gameMap.layers["Tile Layer 1"])
+    if gameState then
+        love.graphics.draw(sprites.background, 0, 0)
+        love.graphics.setFont(gameFont)
+        love.graphics.printf("Level is: " .. saveData.currentLevel, 0, 20, love.graphics.getWidth(), "center")
+    
+        -- Draws everything to the screen in reference to the cameras viewpoint that is within its indentation
+        cam:attach()
+            -- Draws the map
+            gameMap:drawLayer(gameMap.layers["Tile Layer 1"])
 
-        drawPlayer()
-        drawEnemies()
-    cam:detach()
+            drawPlayer()
+            drawEnemies()
+        cam:detach()
+    -- Draws the GUIs
+    elseif not gameState then
+        love.graphics.draw(sprites.background, 0, 0)
+        suit.draw()
+    end
 
-    -- Draws Level
     
 
 end
@@ -169,13 +192,14 @@ end
 -- Jumps the player
 function love.keypressed(key)
 
-    if key == 'up' and player.body then
+    if key == 'up' and player.body and gameState then
         -- Applys jump as long as player is grounded
         if player.grounded then
             player:applyLinearImpulse(0, -4500) 
             sounds.jump:play()
         end
     end
+   
     --[[ Development test function
     if key == 'r' then
         loadMap("level3")
