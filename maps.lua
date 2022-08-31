@@ -13,6 +13,8 @@ function levelLoader()
             loadMap("level6")
         elseif saveData.currentLevel == "level6" then
             loadMap("level7")
+        elseif saveData.currentLevel == "level7" then
+            loadMap("level8")
         elseif saveData.currentLevel == "level8" then
             loadMap("level9")
         elseif saveData.currentLevel == "level10" then
