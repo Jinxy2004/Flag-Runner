@@ -1,6 +1,6 @@
 # Flag Runner
 A platforming game.
-DEMO: https://youtu.be/GSKnfhv64gA
+DEMO: https://youtu.be/Ri9Kf_94bOQ
 
 ## About the game and what I learned
 
