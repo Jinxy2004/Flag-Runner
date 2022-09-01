@@ -103,7 +103,7 @@ function love.load()
 
     --GUI stuff
     ingameGUI = suit.new()
-    ingameState = false
+    ingameState = true
     level = suit.new()
     levelState = false
 
@@ -121,6 +121,7 @@ function love.load()
 
     -- FontSize 
     gameFont = love.graphics.newFont(40)
+    smallFont = love.graphics.newFont(20)
 
     -- Creates a table for everything we want to save
     -- To actually save things we need to seralize it and convert it into a more text friendly format in a file
@@ -150,6 +151,51 @@ function love.update(dt)
         gameMap:update(dt)
         playerUpdate(dt)
         updateEnemies(dt)
+        if gameState then
+            ingameState = true
+            if ingameGUI:Button("Levels", {id = 1}, 20, 20, 200, 50).hit then
+                levelState = true
+            elseif ingameGUI:Button("Close out",{id = 2}, 20, love.graphics.getHeight() - 70, 200, 50).hit and levelState == true then
+                levelState = false
+            end
+        end
+
+        if ingameState or gameState then
+            level.layout:reset(75, 90)
+            level.layout:padding(10,10)
+
+            if level:Button("level1", level.layout:row(90,30)).hit then
+                loadMap("level1")
+            elseif level:Button("level2", level.layout:row()).hit then
+                loadMap("level2")
+            elseif level:Button("level3", level.layout:row()).hit then
+                loadMap("level3")
+            elseif level:Button("level4", level.layout:row()).hit then
+                loadMap("level4")
+            elseif level:Button("level5", level.layout:row()).hit then
+                loadMap("level5")
+            elseif level:Button("level6", level.layout:row()).hit then
+                loadMap("level6")
+            elseif level:Button("level7", level.layout:row()).hit then
+                loadMap("level7")
+            elseif level:Button("level8", level.layout:row()).hit then
+                loadMap("level8")
+            elseif level:Button("level9", level.layout:row()).hit then
+                loadMap("level9")
+            elseif level:Button("level10", level.layout:row()).hit then
+                loadMap("level10")
+            elseif level:Button("level11", level.layout:row()).hit then
+                loadMap("level11")
+            elseif level:Button("level12", level.layout:row()).hit then
+                loadMap("level12")
+            elseif level:Button("level13", level.layout:row()).hit then
+                loadMap("level13")
+            elseif level:Button("level14", level.layout:row()).hit then
+                loadMap("level14")
+            elseif level:Button("level15", level.layout:row()).hit then
+                loadMap("level15")
+            end
+        end
 
         -- Makes the camera look at a specific point, in our game the player and the middle of the screen
         local px = player:getPosition()
@@ -173,6 +219,11 @@ function love.draw()
     if gameState then
         love.graphics.draw(sprites.background, 0, 0)
         love.graphics.setFont(gameFont)
+        ingameGUI:draw()
+        if levelState == true then
+            level:draw()
+        end
+        love.graphics.setFont(smallFont)
         love.graphics.printf("Level is: " .. saveData.currentLevel, 0, 20, love.graphics.getWidth(), "center")
     
         -- Draws everything to the screen in reference to the cameras viewpoint that is within its indentation
