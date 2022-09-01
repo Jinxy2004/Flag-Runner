@@ -101,6 +101,12 @@ function love.load()
     dangerZone = world:newRectangleCollider(-500, love.graphics.getHeight() + 20, 5000, 50, {collision_class = 'Danger'})
     dangerZone:setType('static')
 
+    --GUI stuff
+    ingameGUI = suit.new()
+    ingameState = false
+    level = suit.new()
+    levelState = false
+
 
     -- GameState and Menu variables
     gameState = false
